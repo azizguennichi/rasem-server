@@ -6,6 +6,8 @@ import authRoutes from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
 import scanRoute from "./routes/scanRoutes";
 import testRoute from "./routes/testRoutes";
+import testResultRoute from "./routes/testResultRoutes";
+import catTestRouter from './routes/catTestRoutes';
 import Logging from "./utils/log";
 import mongoose from "mongoose";
 import { config } from "./db/conn";
@@ -75,6 +77,14 @@ const StartServer = () => {
 
   // Test Routes
   app.use("/api", testRoute);
+
+  // Cat Test Routes
+  app.use("/api", catTestRouter);
+
+  // Test Result Routes
+  app.use("/api", testResultRoute);
+
+
   // Handle 404 errors
   app.use((req, res, next) => {
     Logging.error("Endpoint not found");

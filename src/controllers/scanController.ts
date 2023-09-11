@@ -112,3 +112,59 @@ interface BluetoothDevice {
       });
     });
   }
+
+  export function scanAndConnectToBT05(): Promise<BluetoothDevice> {
+    return new Promise((resolve, reject) => {
+      // The command to execute Bluetooth scanning and discover nearby devices.
+      const scanCommand = 'ble-scan';
+  
+      // Executing the 'ble-scan' command to discover nearby Bluetooth devices.
+      exec(scanCommand, async (scanError: ExecException | null, scanStdout: string, scanStderr: string) => {
+        if (scanError) {
+          reject(scanError);
+          return;
+        }
+        if (scanStderr) {
+          reject(new Error(scanStderr));
+          return;
+        }
+  
+        // Parsing the output of 'ble-scan' command to get the list of discovered Bluetooth devices.
+        const lines = scanStdout.trim().split('\n').slice(1);
+        const discoveredDevices = lines.map((line) => {
+          const [rawMacAddress, ...nameParts] = line.trim().split(/\s+/);
+          const macAddress = rawMacAddress.trim();
+          const name = nameParts.join(' ').trim();
+          return { macAddress, name };
+        });
+  
+        // Specify the desired device name.
+        const desiredDeviceName = 'BT05';
+  
+        // Find the device with the desired name in the discovered devices list.
+        const desiredDevice = await discoveredDevices.find((device) => device.name.includes(desiredDeviceName));
+        
+        // if (!desiredDevice) {
+        //   reject(new Error(`Device with name ${desiredDeviceName} not found.`));
+        //   return;
+        // }
+  
+        // Construct the connection command using the MAC address of the desired device.
+        const connectCommand = `ble-serial -d ${desiredDevice!.macAddress}`;
+  
+        // Executing the 'ble-serial' command to establish a connection to the Bluetooth device.
+        exec(connectCommand, (connectError: ExecException | null, connectStdout: string, connectStderr: string) => {
+          if (connectError) {
+            reject(connectError);
+            return;
+          }
+          // if (connectStderr) {
+          //   reject(new Error(connectStderr));
+          //   return;
+          // }
+          // If the connection is successful, resolve the Promise with the connected Bluetooth device.
+        });
+        resolve(desiredDevice!);
+      });
+    });
+  }

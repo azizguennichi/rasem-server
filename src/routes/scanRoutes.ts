@@ -1,5 +1,5 @@
 import { Router,Request,Response,NextFunction } from "express";
-import {connectToDevice,scanBluetoothDevices} from "../controllers/scanController"
+import { connectToDevice,scanAndConnectToBT05,scanBluetoothDevices} from "../controllers/scanController"
 import { SerialPort } from "serialport";
 import {ReadlineParser} from "@serialport/parser-readline"
 import utf8 from "utf8"
@@ -16,7 +16,7 @@ router.get('/scan', async (req: Request, res: Response,next: NextFunction) => {
     }
   });
 
-  router.post('/connect/:deviceName', async (req: Request, res: Response,next: NextFunction) => {
+  router.post('/sds/connect/:deviceName', async (req: Request, res: Response,next: NextFunction) => {
     const { deviceName } = req.params;
   
     try {
@@ -28,6 +28,21 @@ router.get('/scan', async (req: Request, res: Response,next: NextFunction) => {
         res.status(200).json({message:"Connected successfully"})
     },4000)
      
+    } catch (error) {
+      next(error)
+    }
+  });
+  router.post('/connect', async (req: Request, res: Response,next: NextFunction) => {
+  
+    try {
+      scanAndConnectToBT05().then((ress)=>{
+        return res.status(200).json({
+          message:`connected successfully on device`,
+          name:ress.name,
+          address:ress.macAddress
+        })
+      });
+
     } catch (error) {
       next(error)
     }
