@@ -41,10 +41,12 @@ router.get('/scan', async (req: Request, res: Response,next: NextFunction) => {
           name:ress.name,
           address:ress.macAddress
         })
-      });
+      }).catch((err)=>{
+        return res.status(500).json(err)
+      })
 
     } catch (error) {
-      next(error)
+      return res.status(500).json({message:"Failed to connect"})
     }
   });
 
@@ -231,6 +233,8 @@ async function recv(bytes: number[], size: number) {
  * @param req {object}
  * @param res {object}
  */
+let response :boolean = false;
+let responseSent = false; // Flag to track if response has been sent
 router.get('/tram/:com', async (req: Request, res: Response) => {
   const {com} = req.params;
   try {
@@ -239,15 +243,25 @@ router.get('/tram/:com', async (req: Request, res: Response) => {
       path: com,
       baudRate: 9600,
     });
-
-    if(!port){
-      return res.status(400).json({message:"Choose the com"})
-    }
+ 
+    // port.open(function (err) {
+    //   if (err) {
+    //     return res.status(400).json({message:"Hedha el handle"})
+         
+    //   }})
+    // if(!port){
+    //   return res.status(400).json({message:"Choose the com"})
+    // }
     const parser = port.pipe(new ReadlineParser({delimiter:"\n"}));
 
-    let responseSent = false; // Flag to track if response has been sent
+    
     let largestSize = 0;
     let responseData: any = null;
+    port.on('error', function(err) {
+      responseSent = true;
+      return res.status(400).json({message:"Hedha el handle el theni"});
+        
+    });
     // Function to handle data and send the response
    async function handleData(trame: string) {
       // console.log(trame);
@@ -305,7 +319,10 @@ router.get('/tram/:com', async (req: Request, res: Response) => {
       res.status(500).send('No data received from the serial port.');
     }
   } catch (error) {
-    res.status(500).send('Error opening the serial port.');
+    if(!responseSent){
+      
+      res.status(500).send('Error opening the serial port.');
+    }
   }
 });
   export default router

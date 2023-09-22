@@ -121,11 +121,11 @@ interface BluetoothDevice {
       // Executing the 'ble-scan' command to discover nearby Bluetooth devices.
       exec(scanCommand, async (scanError: ExecException | null, scanStdout: string, scanStderr: string) => {
         if (scanError) {
-          reject(scanError);
+          reject("hello world");
           return;
         }
         if (scanStderr) {
-          reject(new Error(scanStderr));
+          reject(new Error("hello world"));
           return;
         }
   

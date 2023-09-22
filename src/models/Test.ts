@@ -10,6 +10,7 @@ const testSchema = new mongoose.Schema({
     enum: ["pass", "fail", "pending"],
     default: "pending",
   },
+  souTests:[{type:mongoose.Types.ObjectId,ref:"Test"}]
 });
 type Test = InferSchemaType<typeof testSchema>;
 export default model<Test>("Test", testSchema);

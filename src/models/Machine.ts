@@ -1,27 +1,27 @@
 import mongoose, { InferSchemaType, model } from "mongoose";
 
 const machineSchema = new mongoose.Schema({
-    productMode:{type:String,require:true},
-    serialNumber:{type:String,required:true},
-    macAdress:{type:String,required:true},
-    productModel:{type:String,required:true},
-    probelength:{type:String,required:true},
-    potdiam:{type:String,required:true},
-    potlength:{type:String,required:true},
-    potwidth:{type:String,required:true},
-    sprinkleduration:{type:String,required:true},
-    sprinklefreq:{type:String,required:true},
-    sprinkletargettimestamp:{type:String,required:true},
-    sprinklemode:{type:String,required:true},
-    thresholdmin:{type:String,required:true},
-    thresholdmax:{type:String,required:true},
-    probecurrent:{type:String,required:true},
-    batterycurrent:{type:String,required:true},
+    productMode:{type:String,require:false},
+    serialNumber:{type:String,required:false},
+    macAdress:{type:String,required:false},
+    productModel:{type:String,required:false},
+    probelength:{type:String,required:false},
+    potdiam:{type:String,required:false},
+    potlength:{type:String,required:false},
+    potwidth:{type:String,required:false},
+    sprinkleduration:{type:String,required:false},
+    sprinklefreq:{type:String,required:false},
+    sprinkletargettimestamp:{type:String,required:false},
+    sprinklemode:{type:String,required:false},
+    thresholdmin:{type:String,required:false},
+    thresholdmax:{type:String,required:false},
+    probecurrent:{type:String,required:false},
+    batterycurrent:{type:String,required:false},
     // testStatus:[{type:mongoose.Types.ObjectId,ref:"Test"}],
     operateurId:{type:mongoose.Types.ObjectId,ref:"User"},
-    testGlobale:{type:String,required:true,enum:["pass","fail","pending"],default:"pending"}
+    testGlobale:{type:String,required:false,enum:["pass","fail","pending"],default:"pending"}
 },
-{timestamps:true}
+{timestamps:false}
 )
 type Machine = InferSchemaType<typeof machineSchema>;
 export default model <Machine> ("Machine",machineSchema);

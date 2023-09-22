@@ -107,6 +107,6 @@ const StartServer = () => {
   http
     .createServer(app)
     .listen(config.server.port, () =>
-      Logging.info(`Server is running on port`)
+      Logging.info(`Server is running on port ${config.server.port}`)
     );
 };

@@ -20,15 +20,17 @@ interface testBody {
 
 export const createTest = async (req: Request,res: Response,next: NextFunction) => {
   try {
-    const { name, etat, description } = req.body as testBody;
+    const { name, etat, description,souTests } = req.body;
     if (!name || !description) {
       Logging.error("Please provide all fields");
       return res.status(400).json({ message: "Please provide all fields" });
     }
+    const tests = await Test.find({_id:{$in:souTests}});
     const newTest = new Test({
       name,
       etat,
       description,
+      souTests:tests
     });
     const savedTest = await newTest.save();
     res.status(201).json(savedTest);
@@ -48,7 +50,7 @@ export const createTest = async (req: Request,res: Response,next: NextFunction) 
 export const getAllTests = async (req: Request,res: Response,next: NextFunction) => {
   try {
     // find the tests from the Test Model
-    const tests = await Test.find();
+    const tests = await Test.find().populate("souTests");
     res.status(200).json(tests);
   } catch (error: any) {
     // handle errors
@@ -69,7 +71,7 @@ export const getOneTest = async (req: Request,res: Response,next: NextFunction) 
     // give the test id in the Request Params
     const { testId } = req.params;
     // find the test with her id
-    const test = await Test.findById(testId);
+    const test = await Test.findById(testId).populate("souTests");
     if (!test) {
       // if he didint find the test return 404 status code
       Logging.error("Test not found");
